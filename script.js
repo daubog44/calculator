@@ -1,6 +1,5 @@
 import * as utils from "./utils.js";
-
-const btnsContainer = document.querySelector(".calculator-btns__container");
+import { updateUI, addEventListenerToBtnsContainer } from "./view.js";
 
 const stateApp = {
   result: "",
@@ -9,12 +8,6 @@ const stateApp = {
   hasCalculusChain: false,
   hasInnerCalculation: false,
 };
-
-const displayResult = document.querySelector(".calculator-current__result");
-
-const currentCalculus = document.querySelector(
-  ".calculator-current__calculation"
-);
 
 function resetState() {
   stateApp.hasInnerCalculation = false;
@@ -28,18 +21,6 @@ function setStateError() {
   stateApp.currentNumber = 0;
   stateApp.calculus = "";
   stateApp.result = "Error";
-}
-
-function updateStateOperation(operation, resultNumber) {
-  const result = utils.fromNumberToResult(resultNumber);
-  stateApp.result = result;
-  stateApp.calculus = `${result} ${operation}`;
-  stateApp.currentNumber = 0;
-}
-
-function updateUI() {
-  displayResult.innerHTML = stateApp.result;
-  currentCalculus.innerHTML = stateApp.calculus;
 }
 
 function updateStateByResult() {
@@ -58,51 +39,43 @@ function handleNumber(number) {
   updateStateByResult();
 }
 
-function negateToStr(number, numberToCompare) {
-  if (numberToCompare > 0) {
-    return `-${number}`;
-  } else {
-    return number.replace("-", "");
-  }
-}
-
 function negateHandler() {
   if (stateApp.hasInnerCalculation) {
     const tmp = stateApp.result.split("(");
-    console.log(tmp);
-    const result = negateToStr(tmp[1], utils.getNumberByStr(tmp[1]));
+    const result = utils.negateToStr(tmp[1], utils.getNumberByStr(tmp[1]));
     stateApp.result = tmp[0] + "(" + result;
     return;
   }
   if (stateApp.hasCalculusChain) return;
-  stateApp.result = negateToStr(stateApp.result, stateApp.currentNumber);
+  stateApp.result = utils.negateToStr(stateApp.result, stateApp.currentNumber);
   updateStateByResult();
 }
 
 function handleEqual() {
+  stateApp.hasCalculusChain = true;
   if (stateApp.hasInnerCalculation) {
     const tmp = stateApp.result.split("(");
     const left = utils.getNumberByStr(tmp[0]);
-    const result = Math.pow(left, tmp[1]);
-    // stateApp.calculus = stateApp.result + ") =";
+    const result = Math.pow(left, utils.getNumberByStr(tmp[1]));
+    if (isNaN(result)) {
+      setStateError();
+      return;
+    }
     stateApp.currentNumber = result;
-    // const calculus = stateApp.calculus.split(" ");
-    // stateApp.calculus = `${calculus[0]} ${calculus[1]}`;
     stateApp.result = utils.fromNumberToResult(result);
     stateApp.hasInnerCalculation = false;
     return stateApp.calculus.length > 0 ? handleEqual() : undefined;
   }
-  stateApp.hasCalculusChain = true;
+
   const [previousMathOperation, leftNumber, currentNumber] =
     getMathOperationAndLeftRightNumber();
-  console.log(stateApp.calculus.includes("="), stateApp.calculus);
   if (stateApp.calculus.includes("=")) {
-    const calculatedVal = getCalculatedOperation(
+    const calculatedVal = utils.getCalculatedOperation(
       previousMathOperation,
       leftNumber,
       currentNumber
     );
-    const result = getCalculatedOperation(
+    const result = utils.getCalculatedOperation(
       previousMathOperation,
       calculatedVal,
       currentNumber
@@ -112,7 +85,7 @@ function handleEqual() {
     return;
   }
   stateApp.calculus = stateApp.calculus + " " + currentNumber + " =";
-  const calculatedVal = getCalculatedOperation(
+  const calculatedVal = utils.getCalculatedOperation(
     previousMathOperation,
     leftNumber,
     currentNumber
@@ -135,6 +108,9 @@ function getMathOperationAndLeftRightNumber() {
 
 function handleOperation(operation) {
   if (stateApp.hasInnerCalculation) {
+    handleEqual();
+    stateApp.hasCalculusChain = false;
+    handleOperation(operation);
     return;
   }
   if (stateApp.calculus === "") {
@@ -150,7 +126,7 @@ function handleOperation(operation) {
     stateApp.calculus = `${stateApp.calculus.split(" ")[0]} ${operation}`;
     return;
   }
-  const calculatedVal = getCalculatedOperation(
+  const calculatedVal = utils.getCalculatedOperation(
     previousMathOperation,
     leftNumber,
     currentNumber
@@ -159,25 +135,10 @@ function handleOperation(operation) {
     setStateError();
     return;
   }
-  updateStateOperation(operation, calculatedVal);
-}
-
-function getCalculatedOperation(op, left, right) {
-  switch (op) {
-    case "+":
-      return left + right;
-    case "-":
-      return left - right;
-    case "x":
-      return left * right;
-    case "/":
-      if (right === 0) {
-        return NaN;
-      }
-      return left / right;
-    default:
-      return NaN;
-  }
+  const result = utils.fromNumberToResult(calculatedVal);
+  stateApp.result = result;
+  stateApp.calculus = `${result} ${operation}`;
+  stateApp.currentNumber = 0;
 }
 
 function handleReverse() {
@@ -212,19 +173,6 @@ function handleSqrt() {
   stateApp.result = utils.fromNumberToResult(val);
 }
 
-// function handlePow() {
-//   const toCompute =
-//     utils.getNumberByStr(stateApp.result) ?? stateApp.currentNumber;
-//   if (isNaN(toCompute)) {
-//     setStateError();
-//     return;
-//   }
-//   const val = toCompute * toCompute;
-//   stateApp.currentNumber = val;
-//   stateApp.hasCalculusChain = true;
-//   stateApp.result = utils.fromNumberToResult(val);
-// }
-
 function handlePow() {
   stateApp.hasInnerCalculation = true;
   const toCompute =
@@ -245,21 +193,32 @@ function handleCanc() {
     stateApp.result = utils.fromNumberToResult(
       utils.getNumberByStr(stateApp.result)
     );
-  } else if (stateApp.calculus.includes("=")) {
-    stateApp.calculus = "";
-  } else {
-    console.log(stateApp.result);
-    if (stateApp.result.slice(0, -1) === "") {
-      stateApp.result = "0";
-    } else {
-      stateApp.result = stateApp.result.slice(0, -1);
-    }
-    updateStateByResult();
-    console.log(stateApp);
+    return;
   }
+  if (stateApp.calculus.includes("=")) {
+    stateApp.calculus = "";
+    return;
+  }
+
+  if (stateApp.result.slice(0, -1) === "") {
+    stateApp.result = "0";
+  } else {
+    stateApp.result = stateApp.result.slice(0, -1);
+  }
+  updateStateByResult();
 }
 
-btnsContainer.addEventListener("click", (e) => {
+function handleFPoint() {
+  if (
+    !stateApp.result.includes(",") ||
+    (stateApp.hasInnerCalculation &&
+      stateApp.result.split(",").length - 1 < 2) ||
+    stateApp.hasCalculusChain
+  )
+    handleNumber(stateApp.result && !stateApp.hasCalculusChain ? "," : "0,");
+}
+
+addEventListenerToBtnsContainer((e) => {
   if (e.target !== e.currentTarget) {
     const typeOfBtn = e.target.style.gridArea.split(" ")[0];
     if (stateApp.result === "Error") {
@@ -297,9 +256,7 @@ btnsContainer.addEventListener("click", (e) => {
         handleNumber(9);
         break;
       case "f-point":
-        if (!stateApp.result.includes(",")) {
-          handleNumber(stateApp.currentNumber ? "," : "0,");
-        }
+        handleFPoint();
         break;
       case "negate":
         negateHandler();
@@ -343,6 +300,6 @@ btnsContainer.addEventListener("click", (e) => {
       default:
         break;
     }
-    updateUI();
+    updateUI(stateApp.result, stateApp.calculus);
   }
 });
