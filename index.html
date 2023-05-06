@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="styles.css" />
+    <title>Calculator</title>
+    <script defer type="module" src="script.js"></script>
+  </head>
+  <body>
+    <main class="app-container">
+      <div class="calculator-container">
+        <div class="calculator-display">
+          <span class="calculator-current__calculation"></span>
+          <span class="calculator-current__result"></span>
+        </div>
+        <div class="calculator-btns__container">
+          <button
+            type="button"
+            class="btn btn-operation"
+            style="grid-area: percentage"
+          >
+            %
+          </button>
+
+          <button type="button" class="btn btn-operation" style="grid-area: CE">
+            CE
+          </button>
+
+          <button type="button" class="btn btn-operation" style="grid-area: C">
+            C
+          </button>
+
+          <button
+            type="button"
+            class="btn btn-operation"
+            style="grid-area: CANC"
+          >
+            &larr;
+          </button>
+
+          <button
+            type="button"
+            class="btn btn-operation"
+            style="grid-area: reverse"
+          >
+            <sup>1</sup>&frasl;<sub>x</sub>
+          </button>
+
+          <button
+            type="button"
+            class="btn btn-operation"
+            style="grid-area: pow"
+          >
+            x<sup>n</sup>
+          </button>
+
+          <button
+            type="button"
+            class="btn btn-operation"
+            style="grid-area: sqrt"
+          >
+            &radic;x
+          </button>
+
+          <button
+            type="button"
+            class="btn btn-operation"
+            style="grid-area: divide; font-size: x-large"
+          >
+            &divide;
+          </button>
+
+          <button type="button" class="btn btn-number" style="grid-area: seven">
+            7
+          </button>
+          <button type="button" class="btn btn-number" style="grid-area: eight">
+            8
+          </button>
+
+          <button type="button" class="btn btn-number" style="grid-area: nine">
+            9
+          </button>
+
+          <button
+            type="button"
+            class="btn btn-operation"
+            style="grid-area: multiply; font-size: x-large"
+          >
+            &times;
+          </button>
+
+          <button type="button" class="btn btn-number" style="grid-area: four">
+            4
+          </button>
+
+          <button type="button" class="btn btn-number" style="grid-area: five">
+            5
+          </button>
+
+          <button type="button" class="btn btn-number" style="grid-area: six">
+            6
+          </button>
+
+          <button
+            type="button"
+            class="btn btn-operation"
+            style="grid-area: minus; font-size: x-large"
+          >
+            &minus;
+          </button>
+
+          <button type="button" class="btn btn-number" style="grid-area: one">
+            1
+          </button>
+
+          <button type="button" class="btn btn-number" style="grid-area: two">
+            2
+          </button>
+
+          <button type="button" class="btn btn-number" style="grid-area: three">
+            3
+          </button>
+
+          <button
+            type="button"
+            class="btn btn-operation"
+            style="grid-area: plus; font-size: x-large"
+          >
+            &plus;
+          </button>
+
+          <button
+            type="button"
+            class="btn btn-number"
+            style="grid-area: negate"
+          >
+            <sup>+</sup>&frasl;<sub>-</sub>
+          </button>
+
+          <button type="button" class="btn btn-number" style="grid-area: zero">
+            0
+          </button>
+
+          <button
+            type="button"
+            class="btn btn-number"
+            style="grid-area: f-point; font-size: x-large"
+          >
+            ,
+          </button>
+
+          <button
+            type="button"
+            class="btn btn-equal"
+            style="grid-area: equal; font-size: x-large"
+          >
+            =
+          </button>
+        </div>
+      </div>
+    </main>
+  </body>
+</html>

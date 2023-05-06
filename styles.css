@@ -1,0 +1,112 @@
+*,
+*::after,
+*::before {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+}
+
+button {
+  padding: 0;
+  border: none;
+  background: none;
+}
+
+.app-container {
+  height: 100vh;
+  width: 100vw;
+  background-color: #3333;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.calculator-container {
+  height: 28em;
+  transform: scale(1.5);
+  max-width: 20.5em;
+  width: 100%;
+  background: rgb(13, 3, 22);
+  opacity: 0.9;
+  border-radius: 10px;
+  box-shadow: rgba(50, 50, 93, 0.25) 0px 50px 100px -20px,
+    rgba(0, 0, 0, 0.3) 0px 30px 60px -30px,
+    rgba(10, 37, 64, 0.35) 0px -2px 6px 0px inset;
+}
+
+@media screen and (max-width: 992px) {
+  .calculator-container {
+    transform: scale(1);
+  }
+}
+
+.calculator-display {
+  margin: 10%;
+  background-color: powderblue;
+  height: 15%;
+  border-radius: 10px;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  justify-content: space-between;
+  padding: 10px;
+}
+
+.calculator-current__calculation {
+  font-size: smaller;
+}
+
+.calculator-current__result {
+  font-size: x-large;
+  font-weight: bold;
+}
+
+.calculator-btns__container {
+  margin: 0 6px;
+  height: calc(100% - (30% + 6px));
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr 1fr;
+  grid-template-rows: 1fr 1fr 1fr 1fr 1fr 1fr;
+  gap: 3px 3px;
+  grid-auto-flow: row;
+  grid-template-areas:
+    "percentage CE C CANC"
+    "reverse pow sqrt divide"
+    "seven eight nine multiply"
+    "four five six minus"
+    "one two three plus"
+    "negate zero f-point equal";
+}
+
+.btn {
+  border-radius: 5px;
+  cursor: pointer;
+}
+.btn-operation {
+  background-color: rgba(50, 50, 93, 0.5);
+  color: white;
+}
+
+.btn-operation:hover {
+  background-color: rgba(50, 50, 93, 0.9);
+}
+
+.btn-number {
+  background-color: rgba(50, 50, 93, 0.9);
+  color: white;
+}
+
+.btn-number:hover {
+  background-color: rgba(50, 50, 93, 0.5);
+}
+
+.btn-equal {
+  background-color: rgba(222, 117, 212, 0.9);
+  color: black;
+}
+
+.btn-equal:hover {
+  background-color: rgba(222, 117, 212, 0.8);
+}
