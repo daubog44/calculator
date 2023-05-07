@@ -7,6 +7,7 @@ export function fromNumberToResult(result) {
 }
 
 export function getCalculatedOperation(op, left, right) {
+  // https://blog.luismarques.io/why-01-02-03-in-javascript-and-how-to-fix-it#heading-using-fixed-point-arithmetic
   const precision = 1000;
   switch (op) {
     case "+":

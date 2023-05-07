@@ -72,7 +72,7 @@ button {
   gap: 3px 3px;
   grid-auto-flow: row;
   grid-template-areas:
-    "percentage CE C CANC"
+    "log CE C CANC"
     "reverse pow sqrt divide"
     "seven eight nine multiply"
     "four five six minus"
