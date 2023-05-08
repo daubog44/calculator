@@ -110,7 +110,7 @@ function getMathOperationAndLeftRightNumber() {
 }
 
 function handleOperation(operation) {
-  if (stateApp.hasInnerCalculationPowPow && !stateApp.result.split("(")[1]) {
+  if (stateApp.hasInnerCalculationPow && !stateApp.result.split("(")[1]) {
     setStateError();
     return;
   }
@@ -120,7 +120,9 @@ function handleOperation(operation) {
     handleOperation(operation);
     return;
   }
-  if (stateApp.calculus === "") {
+
+  if (!stateApp.calculus && !stateApp.result) return;
+  if (!stateApp.calculus && stateApp.result) {
     stateApp.calculus = stateApp.result + " " + operation;
     stateApp.result = "";
     stateApp.currentNumber = 0;
