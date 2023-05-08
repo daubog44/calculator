@@ -2,11 +2,11 @@ import * as utils from "./utils.js";
 import { updateUI, addEventListenerToBtnsContainer } from "./view.js";
 
 const stateApp = {
-  result: "", // result è il risultato che verrà visualizzato
-  calculus: "", // è il calcolo che si sta eseguendo
-  currentNumber: 0, // numero corrente per svolgere i calcoli (dovrebbe essere uguale al result)
-  cleanResult: false, // flag
-  hasInnerCalculationPow: false, // se si sta svolgendo un operazione particolare ad es. 2^(..)
+  result: "",
+  calculus: "",
+  currentNumber: 0,
+  cleanResult: false,
+  hasInnerCalculationPow: false,
 };
 
 function resetState() {
@@ -23,24 +23,19 @@ function setStateError() {
   stateApp.result = "Error";
 }
 
-// set current number by result
 function updateStateByResult() {
   const currentNumber = utils.getNumberByStr(stateApp.result);
   stateApp.currentNumber = currentNumber;
 }
 
 function handleNumber(number) {
-  // se si è appena svolta un' operazione con l' uguale ad es. 2 + 2 =, pulisci lo state
   if (stateApp.calculus.includes("=")) {
     resetState();
   }
-  // se cleanResult è true, imposta il risultato al numero schiacciato altriementi aggiugni il numero al risultato
   stateApp.result = !stateApp.cleanResult
     ? `${stateApp.result}${number}`
     : `${number}`;
-
-  // se cleanResult, impostalo su false
-  if (stateApp.cleanResult) stateApp.cleanResult = false;
+  stateApp.cleanResult = false;
   updateStateByResult();
 }
 
@@ -55,19 +50,12 @@ function negateHandler() {
   // questa riga è spiegata in handleReverse
   if (stateApp.calculus.includes("=")) stateApp.calculus = "";
   const res = utils.negateToStr(stateApp.result, stateApp.currentNumber);
-  console.log(res);
-  if (stateApp.calculus.includes("=")) {
-    stateApp.calculus = "";
-  }
   stateApp.result = res;
   updateStateByResult();
 }
 
 function handleEqual() {
-  // imposta cleanResult
   stateApp.cleanResult = true;
-
-  // se hasInnerCalculationPow allora svolgi l' operazione
   if (stateApp.hasInnerCalculationPow) {
     const tmp = stateApp.result.split("(");
     const left = utils.getNumberByStr(tmp[0]);
@@ -76,28 +64,20 @@ function handleEqual() {
       setStateError();
       return;
     }
-
-    // imposta il nuovo state in base al risultato dell' operazione
     stateApp.currentNumber = result;
     stateApp.result = utils.fromNumberToResult(result);
     stateApp.hasInnerCalculationPow = false;
-    // se c'è un' altra operazione in corso ad esempio un addizione: "2 + 2^(2)" diventerà "2 + 4", quindi svolgi "2 + 2" richiamando la funzione
     return stateApp.calculus.length > 0 ? handleEqual() : undefined;
   }
 
-  // prende i valori del calcolo corrente, ad esempio se calculus è "2 +" e stateApp.currentNumber = 2, llora previousMathOperation = "+"; leftNumber = 2; currentNumber = 2;
   const [previousMathOperation, leftNumber, currentNumber] =
     getMathOperationAndLeftRightNumber();
-
-  // prende il risultato dell' operzione ad esempio "2 + 2" farà 4
-  const calculatedVal = utils.getCalculatedOperation(
-    previousMathOperation,
-    leftNumber,
-    currentNumber
-  );
-
-  // se già si è svolta l' operazione ad esempio "2 + 2 = 4" allora svolgi di nuovo l' operazione quindi sarà "4 + 2 = 6"
   if (stateApp.calculus.includes("=")) {
+    const calculatedVal = utils.getCalculatedOperation(
+      previousMathOperation,
+      leftNumber,
+      currentNumber
+    );
     const result = utils.getCalculatedOperation(
       previousMathOperation,
       calculatedVal,
@@ -107,18 +87,19 @@ function handleEqual() {
     stateApp.calculus = `${calculatedVal} ${previousMathOperation} ${currentNumber} =`;
     return;
   }
-
-  // si spiega da solo
+  stateApp.calculus = stateApp.calculus + " " + currentNumber + " =";
+  const calculatedVal = utils.getCalculatedOperation(
+    previousMathOperation,
+    leftNumber,
+    currentNumber
+  );
   if (isNaN(calculatedVal)) {
     setStateError();
     return;
   }
-  // imposta la variabile calculus che verrà visualizzata e il risultato
-  stateApp.calculus = stateApp.calculus + " " + currentNumber + " =";
   stateApp.result = utils.fromNumberToResult(calculatedVal);
 }
 
-// prende l' operazione corrente e la ritorna (spiegato sopra).
 function getMathOperationAndLeftRightNumber() {
   const calculus = stateApp.calculus.split(" ");
   return [
@@ -129,36 +110,29 @@ function getMathOperationAndLeftRightNumber() {
 }
 
 function handleOperation(operation) {
-  if (stateApp.hasInnerCalculationPow && !stateApp.result.split("(")[1]) {
+  if (stateApp.hasInnerCalculationPowPow && !stateApp.result.split("(")[1]) {
     setStateError();
     return;
   }
 
-  // se hasInnerCalculationPow allora calcola il risultato con handleEqual() e poi esegui l' oprazione con handleOperation
   if (stateApp.hasInnerCalculationPow) {
     handleEqual();
     handleOperation(operation);
     return;
   }
-  // se non c'è calculus e nemmeno result (ad esempio all' inizio quando non si è schiacciato nulla) allora ritorna.
-  if (!stateApp.calculus && !stateApp.result) return;
-
-  // se non c'è calculus ma c'è result (ad esempio 3), allora pulisci result e spostalo in calculus con l'operando schiacciato ad esempio "+", calculus diventerà "3 +"
-  if (!stateApp.calculus && stateApp.result) {
+  if (stateApp.calculus === "") {
     stateApp.calculus = stateApp.result + " " + operation;
     stateApp.result = "";
+    stateApp.currentNumber = 0;
     return;
   }
-  // se nessuno dei casi sopra si è attivato allora vuol dire che si sta svolgendo delle operazione l' una dopo l' altra ad esempio "1 + 2" seguito da un "+ 3"
-
-  // imposta cleanResult su true
   stateApp.cleanResult = true;
-
-  // prendi i valori dell' operazione
   const [previousMathOperation, leftNumber, currentNumber] =
     getMathOperationAndLeftRightNumber();
-
-  // calcola l' operazione
+  if (currentNumber === 0) {
+    stateApp.calculus = `${stateApp.calculus.split(" ")[0]} ${operation}`;
+    return;
+  }
   const calculatedVal = utils.getCalculatedOperation(
     previousMathOperation,
     leftNumber,
@@ -168,8 +142,6 @@ function handleOperation(operation) {
     setStateError();
     return;
   }
-
-  // aggiorna lo stato
   const result = utils.fromNumberToResult(calculatedVal);
   stateApp.result = result;
   stateApp.calculus = `${result} ${operation}`;
@@ -177,63 +149,38 @@ function handleOperation(operation) {
 }
 
 function handleReverse() {
-  // se si sta svolgendo un' operazione ad esempio "2^(2)", allora ritorna.
   if (stateApp.hasInnerCalculationPow) {
     return;
   }
-  // il valore su cui applicare reverse, può essere il result o current number
   const toCompute =
     utils.getNumberByStr(stateApp.result) ?? stateApp.currentNumber;
-
   if (toCompute === 0 || isNaN(toCompute)) {
     setStateError();
     return;
   }
-
-  // calcola il valore e impost il nuovo state
-  const val = 1 / toCompute;
-  const result = utils.fromNumberToResult(val);
-  // se si è premuto = allora pulisci il calculus altrimenti dà problemi, se togli la riga e provi a fare "5 + 5 = 10" poi schiacci la funzione reverse (quindi il risultato sarà 0.1) e poi un' operazione ad esempio "+" darà un risutlato inaspettato (5.1)
   if (stateApp.calculus.includes("=")) stateApp.calculus = "";
+
+  const val = 1 / toCompute;
   stateApp.currentNumber = val;
   stateApp.cleanResult = true;
-  stateApp.result = result;
+  stateApp.result = utils.fromNumberToResult(val);
 }
 
-// simile a handleReverse
 function handleSqrt() {
-  if (stateApp.hasInnerCalculationPow) return;
+  if (stateApp.hasInnerCalculationPow) {
+    return;
+  }
   const toCompute =
     utils.getNumberByStr(stateApp.result) ?? stateApp.currentNumber;
   if (toCompute < 0 || isNaN(toCompute)) {
     setStateError();
     return;
   }
+  if (stateApp.calculus.includes("=")) stateApp.calculus = "";
   const val = Math.sqrt(toCompute);
-  const result = utils.fromNumberToResult(val);
-  if (stateApp.calculus.includes("=")) stateApp.calculus = "";
   stateApp.currentNumber = val;
   stateApp.cleanResult = true;
-  stateApp.result = result;
-}
-
-// simile a handleReverse
-function handleLog() {
-  if (stateApp.hasInnerCalculationPow) {
-    return;
-  }
-  const toCompute =
-    utils.getNumberByStr(stateApp.result) ?? stateApp.currentNumber;
-  if (toCompute <= 0 || isNaN(toCompute)) {
-    setStateError();
-    return;
-  }
-  const val = Math.log(toCompute);
-  const result = utils.fromNumberToResult(val);
-  if (stateApp.calculus.includes("=")) stateApp.calculus = "";
-  stateApp.currentNumber = val;
-  stateApp.cleanResult = true;
-  stateApp.result = result;
+  stateApp.result = utils.fromNumberToResult(val);
 }
 
 function handlePow() {
@@ -306,7 +253,6 @@ function handleFPoint() {
 
 addEventListenerToBtnsContainer((e) => {
   if (e.target !== e.currentTarget) {
-    console.log(stateApp);
     const typeOfBtn = e.target.style.gridArea.split(" ")[0];
     if (stateApp.result === "Error") {
       resetState();
@@ -352,7 +298,6 @@ addEventListenerToBtnsContainer((e) => {
         resetState();
         break;
       case "CE":
-        if (stateApp.calculus.includes("=")) stateApp.calculus = "";
         stateApp.hasInnerCalculationPow = false;
         stateApp.result = "0";
         stateApp.currentNumber = 0;
@@ -384,9 +329,6 @@ addEventListenerToBtnsContainer((e) => {
         break;
       case "pow":
         handlePow();
-        break;
-      case "log":
-        handleLog();
         break;
       default:
         break;
