@@ -273,8 +273,7 @@ function handleCanc() {
     return;
   }
 
-  // se cleanResult ritorna
-  if (stateApp.cleanResult) return;
+  if (stateApp.cleanResult) stateApp.cleanResult = false;
 
   // logica che rimuove di una cifra il risultato
   if (stateApp.result.slice(0, -1) === "") {
