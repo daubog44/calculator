@@ -13,14 +13,12 @@ export function numberHandler(number) {
 }
 
 export function negateHandler() {
-  // se ha hasInnerCalculationPow allora svolgi l' operazione dentro la ^(
   if (stateApp.hasInnerCalculationPow) {
     const [base, esponent] = stateApp.result.split("(");
     const number = esponent * -1;
     stateApp.result = base + "(" + utils.fromNumberToResult(number);
     return;
   }
-  // questa riga è spiegata in handleReverse
   if (stateApp.calculus.includes("=")) stateApp.calculus = "";
   const number = esponent * -1;
   stateApp.result = utils.fromNumberToResult(number);
@@ -28,7 +26,6 @@ export function negateHandler() {
 }
 
 export function FPointHandler() {
-  // se il risultato non include "," oppure se cleanResult oppure se hasInnerCalculationPow non include "," allora chiama handleNumber che aggiornerà lo state.
   const commaInnerCalculus =
     stateApp.hasInnerCalculationPow && stateApp.result.split("(")[1];
   if (
@@ -36,6 +33,5 @@ export function FPointHandler() {
     stateApp.cleanResult ||
     (commaInnerCalculus && !commaInnerCalculus.includes(","))
   )
-    // se result esiste e cleanResult = false allora chiama handleNumber con solo "," altrimenti "0,"
     handleNumber(stateApp.result && !stateApp.cleanResult ? "," : "0,");
 }
