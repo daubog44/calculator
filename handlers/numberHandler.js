@@ -33,5 +33,5 @@ export function FPointHandler() {
     stateApp.cleanResult ||
     (commaInnerCalculus && !commaInnerCalculus.includes(","))
   )
-    handleNumber(stateApp.result && !stateApp.cleanResult ? "," : "0,");
+    numberHandler(stateApp.result && !stateApp.cleanResult ? "," : "0,");
 }
