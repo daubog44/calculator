@@ -72,6 +72,10 @@ function handleEqual() {
 
   const [previousMathOperation, leftNumber, currentNumber] =
     getMathOperationAndLeftRightNumber();
+  const resultCurrentNumber =
+    currentNumber < 0 && previousMathOperation === "-"
+      ? `(${currentNumber})`
+      : currentNumber;
   if (stateApp.calculus.includes("=")) {
     const calculatedVal = utils.getCalculatedOperation(
       previousMathOperation,
@@ -84,10 +88,10 @@ function handleEqual() {
       currentNumber
     );
     stateApp.result = utils.fromNumberToResult(result);
-    stateApp.calculus = `${calculatedVal} ${previousMathOperation} ${currentNumber} =`;
+    stateApp.calculus = `${calculatedVal} ${previousMathOperation} ${resultCurrentNumber} =`;
     return;
   }
-  stateApp.calculus = stateApp.calculus + " " + currentNumber + " =";
+  stateApp.calculus = stateApp.calculus + " " + resultCurrentNumber + " =";
   const calculatedVal = utils.getCalculatedOperation(
     previousMathOperation,
     leftNumber,
@@ -185,6 +189,24 @@ function handleSqrt() {
   stateApp.result = utils.fromNumberToResult(val);
 }
 
+function handleLog() {
+  if (stateApp.hasInnerCalculationPow) {
+    return;
+  }
+  const toCompute =
+    utils.getNumberByStr(stateApp.result) ?? stateApp.currentNumber;
+  if (toCompute <= 0 || isNaN(toCompute)) {
+    setStateError();
+    return;
+  }
+  const val = Math.log(toCompute);
+  const result = utils.fromNumberToResult(val);
+  if (stateApp.calculus.includes("=")) stateApp.calculus = "";
+  stateApp.currentNumber = val;
+  stateApp.cleanResult = true;
+  stateApp.result = result;
+}
+
 function handlePow() {
   // se si è premuto = allora pulisci il calculus altrimenti dà problemi
   if (stateApp.calculus.includes("=")) {
@@ -230,7 +252,7 @@ function handleCanc() {
   if (stateApp.cleanResult) stateApp.cleanResult = false;
 
   // logica che rimuove di una cifra il risultato
-  if (stateApp.result.slice(0, -1) === "") {
+  if (stateApp.result.slice(0, -1) === "" && stateApp.result) {
     stateApp.result = "0";
     stateApp.cleanResult = true;
   } else {
@@ -331,6 +353,9 @@ addEventListenerToBtnsContainer((e) => {
         break;
       case "pow":
         handlePow();
+        break;
+      case "log":
+        handleLog();
         break;
       default:
         break;
