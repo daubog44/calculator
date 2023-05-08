@@ -26,10 +26,7 @@ export function getCalculatedOperation(op, left, right) {
   }
 }
 
-export function negateToStr(number, numberToCompare) {
-  if (numberToCompare > 0) {
-    return `-${number}`;
-  } else {
-    return number.replace("-", "");
-  }
+export function getMathOperationAndLeftRightNumber(stateApp) {
+  const [leftNumber, operation] = stateApp.calculus.split(" ");
+  return [operation, getNumberByStr(leftNumber), stateApp.currentNumber];
 }
