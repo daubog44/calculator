@@ -70,6 +70,7 @@ function handleEqual() {
   // se hasInnerCalculationPow allora svolgi l' operazione
   if (stateApp.hasInnerCalculationPow) {
     const tmp = stateApp.result.split("(");
+    if (!tmp[1]) return;
     const left = utils.getNumberByStr(tmp[0]);
     const result = Math.pow(left, utils.getNumberByStr(tmp[1]));
     if (isNaN(result)) {
@@ -129,10 +130,6 @@ function getMathOperationAndLeftRightNumber() {
 }
 
 function handleOperation(operation) {
-  if (stateApp.hasInnerCalculationPow) {
-    return;
-  }
-
   // se hasInnerCalculationPow allora calcola il risultato con handleEqual() e poi esegui l' oprazione con handleOperation
   if (stateApp.hasInnerCalculationPow) {
     handleEqual();
