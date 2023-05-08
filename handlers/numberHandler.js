@@ -20,7 +20,7 @@ export function negateHandler() {
     return;
   }
   if (stateApp.calculus.includes("=")) stateApp.calculus = "";
-  const number = esponent * -1;
+  const number = stateApp.currentNumber * -1;
   stateApp.result = utils.fromNumberToResult(number);
   stateApp.currentNumber = number;
 }
