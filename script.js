@@ -129,6 +129,10 @@ function getMathOperationAndLeftRightNumber() {
 }
 
 function handleOperation(operation) {
+  if (stateApp.hasInnerCalculationPow) {
+    return;
+  }
+
   // se hasInnerCalculationPow allora calcola il risultato con handleEqual() e poi esegui l' oprazione con handleOperation
   if (stateApp.hasInnerCalculationPow) {
     handleEqual();
