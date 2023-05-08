@@ -70,7 +70,6 @@ function handleEqual() {
   // se hasInnerCalculationPow allora svolgi l' operazione
   if (stateApp.hasInnerCalculationPow) {
     const tmp = stateApp.result.split("(");
-    if (!tmp[1]) return new Error();
     const left = utils.getNumberByStr(tmp[0]);
     const result = Math.pow(left, utils.getNumberByStr(tmp[1]));
     if (isNaN(result)) {
@@ -130,12 +129,14 @@ function getMathOperationAndLeftRightNumber() {
 }
 
 function handleOperation(operation) {
+  if (stateApp.hasInnerCalculationPow && !stateApp.result.split("(")[1]) {
+    setStateError();
+    return;
+  }
+
   // se hasInnerCalculationPow allora calcola il risultato con handleEqual() e poi esegui l' oprazione con handleOperation
   if (stateApp.hasInnerCalculationPow) {
-    const isError = handleEqual();
-    if (isError instanceof Error) {
-      return;
-    }
+    handleEqual();
     handleOperation(operation);
     return;
   }
