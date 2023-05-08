@@ -19,7 +19,6 @@ export function cancHandler() {
   }
 
   if (stateApp.cleanResult) stateApp.cleanResult = false;
-  console.log(stateApp.result);
   if (
     stateApp.result.slice(0, -1) === "" ||
     (stateApp.result.slice(0, -1) === "-" && stateApp.result)
