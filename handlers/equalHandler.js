@@ -29,6 +29,7 @@ export function equalHandler() {
     leftNumber,
     currentNumber
   );
+  const calculatedValStr = utils.fromNumberToResult(calculatedVal);
   if (stateApp.calculus.includes("=")) {
     const result = utils.getCalculatedOperation(
       previousMathOperation,
@@ -36,7 +37,7 @@ export function equalHandler() {
       currentNumber
     );
     stateApp.result = utils.fromNumberToResult(result);
-    stateApp.calculus = `${calculatedVal} ${previousMathOperation} ${resultCurrentNumber} =`;
+    stateApp.calculus = `${calculatedValStr} ${previousMathOperation} ${resultCurrentNumber} =`;
     return;
   }
   stateApp.calculus = stateApp.calculus + " " + resultCurrentNumber + " =";
@@ -44,5 +45,5 @@ export function equalHandler() {
     stateApp.setStateError();
     return;
   }
-  stateApp.result = utils.fromNumberToResult(calculatedVal);
+  stateApp.result = calculatedValStr;
 }
