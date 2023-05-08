@@ -23,12 +23,13 @@ export function equalHandler() {
     currentNumber < 0 && previousMathOperation === "-"
       ? `(${currentNumber})`
       : currentNumber;
+
+  const calculatedVal = utils.getCalculatedOperation(
+    previousMathOperation,
+    leftNumber,
+    currentNumber
+  );
   if (stateApp.calculus.includes("=")) {
-    const calculatedVal = utils.getCalculatedOperation(
-      previousMathOperation,
-      leftNumber,
-      currentNumber
-    );
     const result = utils.getCalculatedOperation(
       previousMathOperation,
       calculatedVal,
@@ -39,11 +40,6 @@ export function equalHandler() {
     return;
   }
   stateApp.calculus = stateApp.calculus + " " + resultCurrentNumber + " =";
-  const calculatedVal = utils.getCalculatedOperation(
-    previousMathOperation,
-    leftNumber,
-    currentNumber
-  );
   if (isNaN(calculatedVal)) {
     stateApp.setStateError();
     return;
